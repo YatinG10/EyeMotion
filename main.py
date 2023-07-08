@@ -1,8 +1,11 @@
 import cv2
 import mediapipe as mp
+import pyautogui
 
 cam = cv2.VideoCapture(0)
 face = mp.solutions.face_mesh.FaceMesh(refine_landmarks = True)
+screen_width, screen_height = pyautogui.size()
+print(screen_width, screen_height)
 
 while True:
     _, frame = cam.read()
@@ -13,12 +16,14 @@ while True:
     frame_height, frame_width, _ = frame.shape
     if landmark_points:
         landmarks = landmark_points[0].landmark
-        for landmark in landmarks[474:478]:
+        for id, landmark in enumerate(landmarks[474:478]):
             x = int(landmark.x * frame_width)
             y = int(landmark.y * frame_height)
             cv2.circle(frame, (x, y), 3, (0, 255, 0))
+            if id == 1:
+                screen_x = int(landmark.x * screen_width)
+                screen_y = int(landmark.y * screen_height)
+                pyautogui.moveTo(screen_x, screen_y)
 
     cv2.imshow('Eye Controlled Mouse', frame)
     cv2.waitKey(1)
-
-# import pyautogui
